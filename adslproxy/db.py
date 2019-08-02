@@ -15,6 +15,7 @@ class RedisClient(object):
         """
         self.db = redis.StrictRedis(host=host, port=port, password=password, decode_responses=True)
         self.proxy_key = proxy_key
+        self.useful_proxy_queue = 'useful_proxy'
     
     def set(self, name, proxy):
         """
@@ -23,6 +24,9 @@ class RedisClient(object):
         :param proxy: 代理
         :return: 设置结果
         """
+        # 兼容 proxy_pool 代理池数据
+        self.db.hset(self.useful_proxy_queue, proxy, 0)
+
         return self.db.hset(self.proxy_key, name, proxy)
     
     def get(self, name):
@@ -46,6 +50,10 @@ class RedisClient(object):
         :param name: 主机名称
         :return: 删除结果
         """
+        # 兼容 proxy_pool 代理池数据
+        proxy = self.get(name)
+        self.db.hdel(self.useful_proxy_queue, proxy)
+
         return self.db.hdel(self.proxy_key, name)
     
     def names(self):
