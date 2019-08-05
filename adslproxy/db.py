@@ -25,7 +25,10 @@ class RedisClient(object):
         :return: 设置结果
         """
         # 兼容 proxy_pool 代理池数据
-        self.db.hset(self.useful_proxy_queue, proxy, 0)
+        try:
+            self.db.hset(self.useful_proxy_queue, proxy, 0)
+        except:
+            print('remove error')
 
         return self.db.hset(self.proxy_key, name, proxy)
     
@@ -51,8 +54,11 @@ class RedisClient(object):
         :return: 删除结果
         """
         # 兼容 proxy_pool 代理池数据
-        proxy = self.get(name)
-        self.db.hdel(self.useful_proxy_queue, proxy)
+        try:
+            proxy = self.get(name)
+            self.db.hdel(self.useful_proxy_queue, proxy)
+        except:
+            print('remove error')
 
         return self.db.hdel(self.proxy_key, name)
     
