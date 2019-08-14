@@ -91,8 +91,11 @@ class Sender():
                     if self.test_proxy(proxy):
                         print('Valid Proxy')
                         self.set_proxy(proxy)
-                        print('Sleeping')
-                        time.sleep(ADSL_CYCLE)
+                        if ADSL_CYCLE < 0:
+                            break
+                        else:
+                            print('Sleeping')
+                            time.sleep(ADSL_CYCLE)
                     else:
                         print('Invalid Proxy')
                 else:

@@ -4,7 +4,7 @@ import tornado.ioloop
 import tornado.web
 from tornado.web import RequestHandler, Application
 from adslproxy.config import *
-
+from adslproxy.sender import run
 
 class MainHandler(RequestHandler):
     def initialize(self, redis):
@@ -12,7 +12,7 @@ class MainHandler(RequestHandler):
     
     def get(self, api=''):
         if not api:
-            links = ['random', 'proxies', 'names', 'all', 'count']
+            links = ['random', 'proxies', 'names', 'all', 'count', 'refresh']
             self.write('<h4>Welcome to ADSL Proxy API</h4>')
             for link in links:
                 self.write('<a href=' + link + '>' + link + '</a><br>')
@@ -40,6 +40,9 @@ class MainHandler(RequestHandler):
         if api == 'count':
             self.write(str(self.redis.count()))
 
+        if api == 'refresh':
+            run()
+            self.write('sucess')
 
 def server(redis, port=API_PORT, address=''):
     application = Application([
